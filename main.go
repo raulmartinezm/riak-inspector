@@ -15,14 +15,27 @@ func main() {
 }
 
 
-func ConnectDB(r *http.Request) string {
-	return r.FormValue("host") + ":" + r.FormValue("port")
+func ConnectDB(r *http.Request, c martini.Context) string {
+
+	host := r.FormValue("host")
+	port := r.FormValue("port")
+	client := riakpbc.NewClient([]string{
+			host + ":" + port,
+})
+
+	c.Map(client)
+	return "connected"
 
 }
 
 
-func GetObj(r *http.Request) string {
+func GetObj(r *http.Request, riak *riakpbc.Client) string {
 	bucket := r.FormValue("bucket")
 	key := r.FormValue("key")
-	return "Bucket:" + bucket + ", key:" + key
+
+	one, err := riak.FetchObject(bucket, key)
+	if err != nil {
+		panic(err)
+	}
+	return string(one.GetContent()[0].GetValue())
 }
