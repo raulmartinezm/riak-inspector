@@ -21,3 +21,10 @@ _testmain.go
 
 *.exe
 *.test
+
+gin-bin 
+
+#idea files
+.idea
+*.iml
+
